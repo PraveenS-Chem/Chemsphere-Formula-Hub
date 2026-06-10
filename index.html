@@ -714,6 +714,72 @@
   #solModule .step-expr { color: var(--accent-teal); background: rgba(0,255,204,0.05); border-color: rgba(0,255,204,0.1); }
   #solModule .var-chip { background: rgba(0,255,204,0.07); border-color: rgba(0,255,204,0.15); color: var(--accent-teal); }
 
+  /* ══════════════════════════════════════════
+     GAS LAWS MODULE — purple accent overrides
+  ══════════════════════════════════════════ */
+  :root { --accent-gas: #a78bfa; }
+
+  #gasModule {
+    display: none;
+    animation: fadeUp 0.35s ease both;
+  }
+  #gasModule.visible { display: block; }
+
+  /* Tab bar */
+  #gasModule .mol-tabs { border-color: rgba(167,139,250,0.18); }
+  #gasModule .mol-tab.active {
+    background: rgba(167,139,250,0.12);
+    color: var(--accent-gas);
+    box-shadow: inset 0 0 0 1px rgba(167,139,250,0.3);
+  }
+  #gasModule .mol-tab:hover { color: var(--accent-gas); }
+
+  /* Input card */
+  #gasModule .calc-input-card h3::before { background: var(--accent-gas); box-shadow: 0 0 4px rgba(167,139,250,0.4); }
+  #gasModule .calc-input-card h3 { color: var(--accent-gas); }
+  #gasModule .formula-display { border-color: rgba(167,139,250,0.22); }
+  #gasModule .fd-expr { color: var(--accent-gas); text-shadow: 0 0 6px rgba(167,139,250,0.2); }
+
+  /* Solve-for buttons */
+  #gasModule .sf-btn.active  { background: rgba(167,139,250,0.1); border-color: rgba(167,139,250,0.4); color: var(--accent-gas); box-shadow: none; }
+  #gasModule .sf-btn:hover   { border-color: var(--accent-gas); color: var(--accent-gas); }
+
+  /* Var symbols */
+  #gasModule .var-sym { color: var(--accent-gas); background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.2); }
+
+  /* Focus ring */
+  #gasModule .field-input-wrap:focus-within { border-color: var(--accent-gas); box-shadow: 0 0 0 2px rgba(167,139,250,0.1); }
+
+  /* Buttons */
+  #gasModule .btn-calculate { background: linear-gradient(135deg, rgba(167,139,250,0.14), rgba(139,92,246,0.07)); border-color: rgba(167,139,250,0.35); color: var(--accent-gas); }
+  #gasModule .btn-calculate:hover { background: linear-gradient(135deg, rgba(167,139,250,0.22), rgba(139,92,246,0.12)); box-shadow: 0 0 12px rgba(167,139,250,0.1); }
+
+  /* Result hero */
+  #gasModule .result-hero { border-color: rgba(167,139,250,0.2); }
+  #gasModule .result-hero::before { background: linear-gradient(90deg, var(--accent-gas), #818cf8); box-shadow: 0 0 8px rgba(167,139,250,0.18); }
+  #gasModule .result-hero::after  { background: radial-gradient(circle, rgba(167,139,250,0.04) 0%, transparent 70%); }
+  #gasModule .result-value { color: var(--accent-gas); text-shadow: 0 0 12px rgba(167,139,250,0.18); }
+
+  /* Steps */
+  #gasModule .step-num  { background: rgba(167,139,250,0.07); border-color: rgba(167,139,250,0.2); color: var(--accent-gas); }
+  #gasModule .step-expr { color: var(--accent-gas); background: rgba(167,139,250,0.05); border-color: rgba(167,139,250,0.1); }
+
+  /* Var chips */
+  #gasModule .var-chip { background: rgba(167,139,250,0.07); border-color: rgba(167,139,250,0.15); color: var(--accent-gas); }
+
+  /* Gas-specific info box (like eq-hint for gas law constants) */
+  .gas-info {
+    background: rgba(167,139,250,0.04);
+    border: 1px solid rgba(167,139,250,0.14);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .gas-info strong { color: var(--accent-gas); font-weight: 600; }
+
   /* Equivalents helper box */
   .eq-hint {
     background: rgba(0,255,204,0.04);
@@ -2203,6 +2269,468 @@
 
   </div><!-- /#solModule -->
 
+  <!-- ══════════════════════════════════════════
+       GAS LAWS MODULE
+  ══════════════════════════════════════════ -->
+  <div id="gasModule">
+
+    <div class="mol-tabs" role="tablist">
+      <button class="mol-tab active" data-gas-panel="gas-boyle" role="tab">
+        <span class="tab-icon">💨</span> Boyle's
+      </button>
+      <button class="mol-tab" data-gas-panel="gas-charles" role="tab">
+        <span class="tab-icon">🌡️</span> Charles'
+      </button>
+      <button class="mol-tab" data-gas-panel="gas-gaylussac" role="tab">
+        <span class="tab-icon">🔥</span> Gay-Lussac's
+      </button>
+      <button class="mol-tab" data-gas-panel="gas-combined" role="tab">
+        <span class="tab-icon">⚗️</span> Combined
+      </button>
+      <button class="mol-tab" data-gas-panel="gas-ideal" role="tab">
+        <span class="tab-icon">📐</span> Ideal Gas
+      </button>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         PANEL 1: Boyle's Law  P₁V₁ = P₂V₂
+    ════════════════════════════════════════ -->
+    <div class="mol-panel active" id="panel-gas-boyle">
+      <div class="calc-layout">
+        <div class="calc-input-card">
+          <h3>Boyle's Law Calculator</h3>
+          <div class="formula-display">
+            <div class="fd-label">Formula</div>
+            <div class="fd-expr" id="bl-formula-disp">P₁V₁ = P₂V₂</div>
+          </div>
+          <div class="gas-info">
+            Boyle's Law: at <strong>constant temperature</strong>, pressure and volume are inversely proportional. Pressure units must be consistent (e.g. both atm, both kPa).
+          </div>
+          <div class="solve-for-row">
+            <label>Solve for</label>
+            <div class="solve-for-options">
+              <button class="sf-btn active" data-calc="bl" data-solve="P2">P₂</button>
+              <button class="sf-btn" data-calc="bl" data-solve="V2">V₂</button>
+              <button class="sf-btn" data-calc="bl" data-solve="P1">P₁</button>
+              <button class="sf-btn" data-calc="bl" data-solve="V1">V₁</button>
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field-row">
+              <label><span class="var-sym">P₁</span> Initial Pressure</label>
+              <div class="field-input-wrap" id="bl-P1-wrap">
+                <input type="number" id="bl-P1" placeholder="e.g. 2.0" min="0" step="any"/>
+                <span class="field-unit">any unit</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">V₁</span> Initial Volume</label>
+              <div class="field-input-wrap" id="bl-V1-wrap">
+                <input type="number" id="bl-V1" placeholder="e.g. 5.0" min="0" step="any"/>
+                <span class="field-unit">any unit</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">P₂</span> Final Pressure</label>
+              <div class="field-input-wrap disabled" id="bl-P2-wrap">
+                <input type="number" id="bl-P2" placeholder="calculated" disabled min="0" step="any"/>
+                <span class="field-unit">same unit</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">V₂</span> Final Volume</label>
+              <div class="field-input-wrap" id="bl-V2-wrap">
+                <input type="number" id="bl-V2" placeholder="e.g. 2.0" min="0" step="any"/>
+                <span class="field-unit">same unit</span>
+              </div>
+            </div>
+          </div>
+          <div class="error-box" id="bl-error"></div>
+          <button class="btn-calculate" onclick="calcBL()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Calculate
+          </button>
+          <button class="btn-reset" onclick="resetGas('bl')">↺ Reset</button>
+        </div>
+        <div class="solution-panel">
+          <div class="solution-placeholder" id="bl-placeholder">
+            <div class="ph-icon">💨</div>
+            <p>Enter three known values and press <strong style="color:var(--text-secondary)">Calculate</strong>. Temperature is constant — no T input needed.</p>
+          </div>
+          <div class="result-hero" id="bl-result">
+            <div class="result-label">Result</div>
+            <div class="result-name" id="bl-result-name">—</div>
+            <div class="result-value" id="bl-result-value">—</div>
+            <div class="result-unit" id="bl-result-unit">—</div>
+          </div>
+          <div class="steps-card" id="bl-steps">
+            <div class="steps-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
+              Step-by-Step Solution
+            </div>
+            <div class="steps-list" id="bl-steps-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         PANEL 2: Charles' Law  V₁/T₁ = V₂/T₂
+    ════════════════════════════════════════ -->
+    <div class="mol-panel" id="panel-gas-charles">
+      <div class="calc-layout">
+        <div class="calc-input-card">
+          <h3>Charles' Law Calculator</h3>
+          <div class="formula-display">
+            <div class="fd-label">Formula</div>
+            <div class="fd-expr" id="cl-formula-disp">V₁/T₁ = V₂/T₂</div>
+          </div>
+          <div class="gas-info">
+            Charles' Law: at <strong>constant pressure</strong>, volume and temperature are directly proportional. Temperature must be in <strong>Kelvin</strong> (K = °C + 273.15).
+          </div>
+          <div class="solve-for-row">
+            <label>Solve for</label>
+            <div class="solve-for-options">
+              <button class="sf-btn active" data-calc="cl" data-solve="V2">V₂</button>
+              <button class="sf-btn" data-calc="cl" data-solve="T2">T₂</button>
+              <button class="sf-btn" data-calc="cl" data-solve="V1">V₁</button>
+              <button class="sf-btn" data-calc="cl" data-solve="T1">T₁</button>
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field-row">
+              <label><span class="var-sym">V₁</span> Initial Volume</label>
+              <div class="field-input-wrap" id="cl-V1-wrap">
+                <input type="number" id="cl-V1" placeholder="e.g. 3.0" min="0" step="any"/>
+                <span class="field-unit">any unit</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">T₁</span> Initial Temperature</label>
+              <div class="field-input-wrap" id="cl-T1-wrap">
+                <input type="number" id="cl-T1" placeholder="e.g. 300" min="0" step="any"/>
+                <span class="field-unit">K</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">V₂</span> Final Volume</label>
+              <div class="field-input-wrap disabled" id="cl-V2-wrap">
+                <input type="number" id="cl-V2" placeholder="calculated" disabled min="0" step="any"/>
+                <span class="field-unit">same unit</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">T₂</span> Final Temperature</label>
+              <div class="field-input-wrap" id="cl-T2-wrap">
+                <input type="number" id="cl-T2" placeholder="e.g. 450" min="0" step="any"/>
+                <span class="field-unit">K</span>
+              </div>
+            </div>
+          </div>
+          <div class="error-box" id="cl-error"></div>
+          <button class="btn-calculate" onclick="calcCL()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Calculate
+          </button>
+          <button class="btn-reset" onclick="resetGas('cl')">↺ Reset</button>
+        </div>
+        <div class="solution-panel">
+          <div class="solution-placeholder" id="cl-placeholder">
+            <div class="ph-icon">🌡️</div>
+            <p>Enter three known values in <strong style="color:var(--text-secondary)">Kelvin</strong> for temperature, then press <strong style="color:var(--text-secondary)">Calculate</strong>.</p>
+          </div>
+          <div class="result-hero" id="cl-result">
+            <div class="result-label">Result</div>
+            <div class="result-name" id="cl-result-name">—</div>
+            <div class="result-value" id="cl-result-value">—</div>
+            <div class="result-unit" id="cl-result-unit">—</div>
+          </div>
+          <div class="steps-card" id="cl-steps">
+            <div class="steps-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
+              Step-by-Step Solution
+            </div>
+            <div class="steps-list" id="cl-steps-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         PANEL 3: Gay-Lussac's Law  P₁/T₁ = P₂/T₂
+    ════════════════════════════════════════ -->
+    <div class="mol-panel" id="panel-gas-gaylussac">
+      <div class="calc-layout">
+        <div class="calc-input-card">
+          <h3>Gay-Lussac's Law Calculator</h3>
+          <div class="formula-display">
+            <div class="fd-label">Formula</div>
+            <div class="fd-expr" id="gl-formula-disp">P₁/T₁ = P₂/T₂</div>
+          </div>
+          <div class="gas-info">
+            Gay-Lussac's Law: at <strong>constant volume</strong>, pressure and temperature are directly proportional. Temperature must be in <strong>Kelvin</strong>.
+          </div>
+          <div class="solve-for-row">
+            <label>Solve for</label>
+            <div class="solve-for-options">
+              <button class="sf-btn active" data-calc="gl" data-solve="P2">P₂</button>
+              <button class="sf-btn" data-calc="gl" data-solve="T2">T₂</button>
+              <button class="sf-btn" data-calc="gl" data-solve="P1">P₁</button>
+              <button class="sf-btn" data-calc="gl" data-solve="T1">T₁</button>
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field-row">
+              <label><span class="var-sym">P₁</span> Initial Pressure</label>
+              <div class="field-input-wrap" id="gl-P1-wrap">
+                <input type="number" id="gl-P1" placeholder="e.g. 1.0" min="0" step="any"/>
+                <span class="field-unit">any unit</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">T₁</span> Initial Temperature</label>
+              <div class="field-input-wrap" id="gl-T1-wrap">
+                <input type="number" id="gl-T1" placeholder="e.g. 300" min="0" step="any"/>
+                <span class="field-unit">K</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">P₂</span> Final Pressure</label>
+              <div class="field-input-wrap disabled" id="gl-P2-wrap">
+                <input type="number" id="gl-P2" placeholder="calculated" disabled min="0" step="any"/>
+                <span class="field-unit">same unit</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">T₂</span> Final Temperature</label>
+              <div class="field-input-wrap" id="gl-T2-wrap">
+                <input type="number" id="gl-T2" placeholder="e.g. 600" min="0" step="any"/>
+                <span class="field-unit">K</span>
+              </div>
+            </div>
+          </div>
+          <div class="error-box" id="gl-error"></div>
+          <button class="btn-calculate" onclick="calcGL()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Calculate
+          </button>
+          <button class="btn-reset" onclick="resetGas('gl')">↺ Reset</button>
+        </div>
+        <div class="solution-panel">
+          <div class="solution-placeholder" id="gl-placeholder">
+            <div class="ph-icon">🔥</div>
+            <p>Enter three known values and press <strong style="color:var(--text-secondary)">Calculate</strong>. Volume is constant — no V input needed.</p>
+          </div>
+          <div class="result-hero" id="gl-result">
+            <div class="result-label">Result</div>
+            <div class="result-name" id="gl-result-name">—</div>
+            <div class="result-value" id="gl-result-value">—</div>
+            <div class="result-unit" id="gl-result-unit">—</div>
+          </div>
+          <div class="steps-card" id="gl-steps">
+            <div class="steps-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
+              Step-by-Step Solution
+            </div>
+            <div class="steps-list" id="gl-steps-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         PANEL 4: Combined Gas Law  P₁V₁/T₁ = P₂V₂/T₂
+    ════════════════════════════════════════ -->
+    <div class="mol-panel" id="panel-gas-combined">
+      <div class="calc-layout">
+        <div class="calc-input-card">
+          <h3>Combined Gas Law Calculator</h3>
+          <div class="formula-display">
+            <div class="fd-label">Formula</div>
+            <div class="fd-expr" id="cg-formula-disp">P₁V₁/T₁ = P₂V₂/T₂</div>
+          </div>
+          <div class="gas-info">
+            Combines Boyle's, Charles', and Gay-Lussac's laws. <strong>Amount of gas is fixed.</strong> Solve for any one of the six variables; temperature in <strong>Kelvin</strong>.
+          </div>
+          <div class="solve-for-row">
+            <label>Solve for</label>
+            <div class="solve-for-options">
+              <button class="sf-btn active" data-calc="cg" data-solve="P2">P₂</button>
+              <button class="sf-btn" data-calc="cg" data-solve="V2">V₂</button>
+              <button class="sf-btn" data-calc="cg" data-solve="T2">T₂</button>
+              <button class="sf-btn" data-calc="cg" data-solve="P1">P₁</button>
+              <button class="sf-btn" data-calc="cg" data-solve="V1">V₁</button>
+              <button class="sf-btn" data-calc="cg" data-solve="T1">T₁</button>
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field-row">
+              <label><span class="var-sym">P₁</span> Initial Pressure</label>
+              <div class="field-input-wrap" id="cg-P1-wrap">
+                <input type="number" id="cg-P1" placeholder="e.g. 1.0" min="0" step="any"/>
+                <span class="field-unit">any unit</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">V₁</span> Initial Volume</label>
+              <div class="field-input-wrap" id="cg-V1-wrap">
+                <input type="number" id="cg-V1" placeholder="e.g. 4.0" min="0" step="any"/>
+                <span class="field-unit">any unit</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">T₁</span> Initial Temperature</label>
+              <div class="field-input-wrap" id="cg-T1-wrap">
+                <input type="number" id="cg-T1" placeholder="e.g. 300" min="0" step="any"/>
+                <span class="field-unit">K</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">P₂</span> Final Pressure</label>
+              <div class="field-input-wrap disabled" id="cg-P2-wrap">
+                <input type="number" id="cg-P2" placeholder="calculated" disabled min="0" step="any"/>
+                <span class="field-unit">same unit</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">V₂</span> Final Volume</label>
+              <div class="field-input-wrap" id="cg-V2-wrap">
+                <input type="number" id="cg-V2" placeholder="e.g. 2.0" min="0" step="any"/>
+                <span class="field-unit">same unit</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">T₂</span> Final Temperature</label>
+              <div class="field-input-wrap" id="cg-T2-wrap">
+                <input type="number" id="cg-T2" placeholder="e.g. 450" min="0" step="any"/>
+                <span class="field-unit">K</span>
+              </div>
+            </div>
+          </div>
+          <div class="error-box" id="cg-error"></div>
+          <button class="btn-calculate" onclick="calcCG()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Calculate
+          </button>
+          <button class="btn-reset" onclick="resetGas('cg')">↺ Reset</button>
+        </div>
+        <div class="solution-panel">
+          <div class="solution-placeholder" id="cg-placeholder">
+            <div class="ph-icon">⚗️</div>
+            <p>Enter five known values and press <strong style="color:var(--text-secondary)">Calculate</strong> to find the sixth. All six variables required except the one being solved.</p>
+          </div>
+          <div class="result-hero" id="cg-result">
+            <div class="result-label">Result</div>
+            <div class="result-name" id="cg-result-name">—</div>
+            <div class="result-value" id="cg-result-value">—</div>
+            <div class="result-unit" id="cg-result-unit">—</div>
+          </div>
+          <div class="steps-card" id="cg-steps">
+            <div class="steps-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
+              Step-by-Step Solution
+            </div>
+            <div class="steps-list" id="cg-steps-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         PANEL 5: Ideal Gas Law  PV = nRT
+    ════════════════════════════════════════ -->
+    <div class="mol-panel" id="panel-gas-ideal">
+      <div class="calc-layout">
+        <div class="calc-input-card">
+          <h3>Ideal Gas Law Calculator</h3>
+          <div class="formula-display">
+            <div class="fd-label">Formula</div>
+            <div class="fd-expr" id="ig-formula-disp">PV = nRT</div>
+          </div>
+          <div class="gas-info">
+            <strong>R = 0.08206 L·atm/(mol·K)</strong> — use atm for pressure and L for volume, or select kPa (R = 8.314 L·kPa/mol·K). Temperature in <strong>Kelvin</strong>.
+          </div>
+          <div class="solve-for-row">
+            <label>Solve for</label>
+            <div class="solve-for-options">
+              <button class="sf-btn active" data-calc="ig" data-solve="P">P</button>
+              <button class="sf-btn" data-calc="ig" data-solve="V">V</button>
+              <button class="sf-btn" data-calc="ig" data-solve="n">n</button>
+              <button class="sf-btn" data-calc="ig" data-solve="T">T</button>
+            </div>
+          </div>
+          <!-- R unit selector -->
+          <div class="field-row" style="margin-bottom:14px">
+            <label><span class="var-sym">R</span> Gas Constant Unit System</label>
+            <div class="field-input-wrap" id="ig-R-wrap" style="cursor:default">
+              <select id="ig-R-sel" style="flex:1;background:none;border:none;color:var(--text-primary);font-family:'Share Tech Mono',monospace;font-size:0.88rem;padding:11px 12px;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none">
+                <option value="0.08206">0.08206 L·atm / (mol·K) — atm / L</option>
+                <option value="8.314">8.314 L·kPa / (mol·K) — kPa / L</option>
+                <option value="62.364">62.364 L·mmHg / (mol·K) — mmHg / L</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field-row">
+              <label><span class="var-sym">P</span> Pressure</label>
+              <div class="field-input-wrap disabled" id="ig-P-wrap">
+                <input type="number" id="ig-P" placeholder="calculated" disabled min="0" step="any"/>
+                <span class="field-unit" id="ig-P-unit">atm</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">V</span> Volume</label>
+              <div class="field-input-wrap" id="ig-V-wrap">
+                <input type="number" id="ig-V" placeholder="e.g. 22.4" min="0" step="any"/>
+                <span class="field-unit">L</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">n</span> Moles of Gas</label>
+              <div class="field-input-wrap" id="ig-n-wrap">
+                <input type="number" id="ig-n" placeholder="e.g. 1.0" min="0" step="any"/>
+                <span class="field-unit">mol</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <label><span class="var-sym">T</span> Temperature</label>
+              <div class="field-input-wrap" id="ig-T-wrap">
+                <input type="number" id="ig-T" placeholder="e.g. 273.15" min="0" step="any"/>
+                <span class="field-unit">K</span>
+              </div>
+            </div>
+          </div>
+          <div class="error-box" id="ig-error"></div>
+          <button class="btn-calculate" onclick="calcIG()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Calculate
+          </button>
+          <button class="btn-reset" onclick="resetGas('ig')">↺ Reset</button>
+        </div>
+        <div class="solution-panel">
+          <div class="solution-placeholder" id="ig-placeholder">
+            <div class="ph-icon">📐</div>
+            <p>Select what to solve for, choose your unit system, enter three known values and press <strong style="color:var(--text-secondary)">Calculate</strong>.</p>
+          </div>
+          <div class="result-hero" id="ig-result">
+            <div class="result-label">Result</div>
+            <div class="result-name" id="ig-result-name">—</div>
+            <div class="result-value" id="ig-result-value">—</div>
+            <div class="result-unit" id="ig-result-unit">—</div>
+          </div>
+          <div class="steps-card" id="ig-steps">
+            <div class="steps-header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/></svg>
+              Step-by-Step Solution
+            </div>
+            <div class="steps-list" id="ig-steps-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /#gasModule -->
+
   </main>
 </div>
 
@@ -2225,11 +2753,12 @@
     { id: 11, category: 'solutions', color: '#00ffcc', icon: '🫧', name: "Raoult's Law",       expr: 'Pₛ = χₛ·P°',    desc: 'Vapour pressure lowering by a non-volatile solute.',vars: ['Pₛ','χₛ','P°'] },
 
     // Gas Laws
-    { id: 12, category: 'gas', color: '#a78bfa', icon: '💨', name: "Boyle's Law",          expr: 'P₁V₁ = P₂V₂',   desc: 'Pressure-volume relation at constant temperature.',  vars: ['P','V','T'] },
-    { id: 13, category: 'gas', color: '#a78bfa', icon: '🌡️', name: "Charles's Law",        expr: 'V₁/T₁ = V₂/T₂', desc: 'Volume-temperature relation at constant pressure.',  vars: ['V','T','P'] },
-    { id: 14, category: 'gas', color: '#a78bfa', icon: '🔥', name: "Gay-Lussac's Law",     expr: 'P₁/T₁ = P₂/T₂', desc: 'Pressure-temperature relation at constant volume.',  vars: ['P','T','V'] },
-    { id: 15, category: 'gas', color: '#a78bfa', icon: '⚗️', name: 'Ideal Gas Law',         expr: 'PV = nRT',       desc: 'Combines all three gas laws into one equation.',     vars: ['P','V','n','R','T'] },
-    { id: 16, category: 'gas', color: '#a78bfa', icon: '📐', name: "Graham's Law",          expr: 'r ∝ 1/√M',       desc: 'Rate of effusion inversely proportional to √M.',    vars: ['r','M'] },
+    { id: 12, category: 'gas', color: '#a78bfa', icon: '💨', name: "Boyle's Law",          expr: 'P₁V₁ = P₂V₂',      desc: 'Pressure-volume relation at constant temperature.', vars: ['P₁','V₁','P₂','V₂'] },
+    { id: 13, category: 'gas', color: '#a78bfa', icon: '🌡️', name: "Charles' Law",         expr: 'V₁/T₁ = V₂/T₂',    desc: 'Volume-temperature relation at constant pressure.', vars: ['V₁','T₁','V₂','T₂'] },
+    { id: 14, category: 'gas', color: '#a78bfa', icon: '🔥', name: "Gay-Lussac's Law",     expr: 'P₁/T₁ = P₂/T₂',    desc: 'Pressure-temperature relation at constant volume.',  vars: ['P₁','T₁','P₂','T₂'] },
+    { id: 25, category: 'gas', color: '#a78bfa', icon: '⚗️', name: 'Combined Gas Law',     expr: 'P₁V₁/T₁ = P₂V₂/T₂', desc: 'All three simple gas laws unified.',               vars: ['P','V','T'] },
+    { id: 15, category: 'gas', color: '#a78bfa', icon: '📐', name: 'Ideal Gas Law',         expr: 'PV = nRT',          desc: 'Combines all three gas laws into one equation.',    vars: ['P','V','n','R','T'] },
+    { id: 16, category: 'gas', color: '#a78bfa', icon: '🌬️', name: "Graham's Law",          expr: 'r ∝ 1/√M',         desc: 'Rate of effusion inversely proportional to √M.',    vars: ['r','M'] },
 
     // Acids & Bases
     { id: 17, category: 'acids', color: '#fb923c', icon: '🧫', name: 'pH Definition',       expr: 'pH = -log[H⁺]',  desc: 'Negative log of hydrogen ion concentration.',       vars: ['pH','[H⁺]'] },
@@ -2332,6 +2861,7 @@
     const statsRow   = document.querySelector('.stats-row');
     const moleModule = document.getElementById('moleModule');
     const solModule  = document.getElementById('solModule');
+    const gasModule  = document.getElementById('gasModule');
 
     // Hide everything first
     libraryEls.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
@@ -2339,11 +2869,14 @@
     if (statsRow) statsRow.style.display = 'none';
     moleModule.classList.remove('visible');
     solModule.classList.remove('visible');
+    gasModule.classList.remove('visible');
 
     if (view === 'mole-module') {
       moleModule.classList.add('visible');
     } else if (view === 'sol-module') {
       solModule.classList.add('visible');
+    } else if (view === 'gas-module') {
+      gasModule.classList.add('visible');
     } else {
       // library
       libraryEls.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
@@ -2375,6 +2908,8 @@
       showView('mole-module');
     } else if (cat === 'solutions') {
       showView('sol-module');
+    } else if (cat === 'gas') {
+      showView('gas-module');
     } else {
       showView('library');
       renderCards();
@@ -2393,11 +2928,15 @@
     // Tab routing maps
     const moleTabMap = { 1:'mole-calc', 2:'particle-calc', 3:'mole-calc', 5:'mole-calc', 6:'mole-calc' };
     const solTabMap  = { 7:'sol-molarity', 8:'sol-molality', 9:'sol-dilution', 10:'sol-normality', 11:null };
+    const gasTabMap  = { 12:'gas-boyle', 13:'gas-charles', 14:'gas-gaylussac', 25:'gas-combined', 15:'gas-ideal' };
 
     list.forEach((f, i) => {
       const isMole = f.category === 'mole';
       const isSol  = f.category === 'solutions';
-      const hasCalc = isMole || (isSol && solTabMap[f.id] !== null && solTabMap[f.id] !== undefined);
+      const isGas  = f.category === 'gas';
+      const hasCalc = isMole
+        || (isSol && solTabMap[f.id] !== null && solTabMap[f.id] !== undefined)
+        || (isGas && gasTabMap[f.id] !== undefined);
 
       const card = document.createElement('div');
       card.className = 'formula-card';
@@ -2412,6 +2951,10 @@
       } else if (isSol && solTabMap[f.id]) {
         const targetTab = solTabMap[f.id];
         btnHtml = `<button class="btn-calc" onclick="openSolTab('${targetTab}')" style="border-color:rgba(0,255,204,0.3);color:#00ffcc;background:rgba(0,255,204,0.08)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Open</button>`;
+      } else if (isGas && gasTabMap[f.id]) {
+        const targetTab = gasTabMap[f.id];
+        btnHtml = `<button class="btn-calc" onclick="openGasTab('${targetTab}')" style="border-color:rgba(167,139,250,0.3);color:#a78bfa;background:rgba(167,139,250,0.08)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Open</button>`;
       } else {
         btnHtml = `<button class="btn-calc" disabled title="Calculator coming soon">
@@ -2445,6 +2988,11 @@
   function openSolTab(tabId) {
     setCategory('solutions');
     activateSolTab(tabId);
+  }
+
+  function openGasTab(tabId) {
+    setCategory('gas');
+    activateGasTab(tabId);
   }
 
   // ── Sub-tab switching ──
@@ -3103,6 +3651,470 @@
         { title: 'Calculate aliquot volume', expr: `V₁ = ${fmt(V1)} mL`, note: `Pipette ${fmt(V1)} mL from the ${fmt(C1)} M stock and dilute to a final volume of ${fmt(V2)} mL.` },
       ]);
     }
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     GAS LAWS MODULE LOGIC
+  ═══════════════════════════════════════════════════════════ */
+
+  // ── Gas sub-tab switching ──
+  function activateGasTab(panelId) {
+    document.querySelectorAll('#gasModule .mol-tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.gasPanel === panelId));
+    document.querySelectorAll('#gasModule .mol-panel').forEach(p =>
+      p.classList.toggle('active', p.id === 'panel-' + panelId));
+  }
+
+  document.querySelectorAll('#gasModule .mol-tab').forEach(tab => {
+    tab.addEventListener('click', () => activateGasTab(tab.dataset.gasPanel));
+  });
+
+  // ── Wire solve-for buttons (gas calcs routed through global sf-btn handler) ──
+  // The global .sf-btn listener already fires; we extend updateSolveFor to delegate gas calcs
+  // by patching the tail:
+  const _origUpdateSolveFor = updateSolveFor;
+  // (No redeclaration needed — we hook gas calcs in updateGasSolveFor called below)
+
+  // ── Gas shared helpers (mirror the sol helpers for gas calc IDs) ──
+  function hideResultsGas(calc) {
+    [`${calc}-result`, `${calc}-steps`, `${calc}-error`].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('visible');
+    });
+    const ph = document.getElementById(`${calc}-placeholder`);
+    if (ph) ph.style.display = '';
+  }
+
+  function showErrorGas(calc, msg) {
+    hideResultsGas(calc);
+    const el = document.getElementById(`${calc}-error`);
+    if (!el) return;
+    el.textContent = '⚠ ' + msg;
+    el.classList.add('visible');
+  }
+
+  function clearErrorGas(calc) {
+    const el = document.getElementById(`${calc}-error`);
+    if (el) { el.textContent = ''; el.classList.remove('visible'); }
+  }
+
+  function showResultGas(calc, name, value, unit, steps) {
+    clearErrorGas(calc);
+    const ph = document.getElementById(`${calc}-placeholder`);
+    if (ph) ph.style.display = 'none';
+    const hero = document.getElementById(`${calc}-result`);
+    document.getElementById(`${calc}-result-name`).textContent  = name;
+    document.getElementById(`${calc}-result-value`).textContent = value;
+    document.getElementById(`${calc}-result-unit`).textContent  = unit;
+    hero.classList.add('visible');
+    const stepsCard = document.getElementById(`${calc}-steps`);
+    const stepsList = document.getElementById(`${calc}-steps-list`);
+    stepsList.innerHTML = '';
+    steps.forEach((s, i) => {
+      const div = document.createElement('div');
+      div.className = 'step-item';
+      div.style.animationDelay = (i * 0.07) + 's';
+      div.innerHTML = `
+        <div class="step-num">${i + 1}</div>
+        <div class="step-content">
+          <div class="step-title">${s.title}</div>
+          ${s.expr ? `<div class="step-expr">${s.expr}</div>` : ''}
+          ${s.note ? `<div class="step-note">${s.note}</div>` : ''}
+        </div>`;
+      stepsList.appendChild(div);
+    });
+    stepsCard.classList.add('visible');
+  }
+
+  // ── Gas solve-for field toggling ──
+  function updateGasSolveFor(calc, solve) {
+    const gasVarSets = {
+      bl: ['P1','V1','P2','V2'],
+      cl: ['V1','T1','V2','T2'],
+      gl: ['P1','T1','P2','T2'],
+      cg: ['P1','V1','T1','P2','V2','T2'],
+      ig: ['P','V','n','T'],
+    };
+    const gasFormulae = {
+      bl: { P2:'P₂ = P₁V₁ ÷ V₂', V2:'V₂ = P₁V₁ ÷ P₂', P1:'P₁ = P₂V₂ ÷ V₁', V1:'V₁ = P₂V₂ ÷ P₁' },
+      cl: { V2:'V₂ = V₁T₂ ÷ T₁', T2:'T₂ = T₁V₂ ÷ V₁', V1:'V₁ = V₂T₁ ÷ T₂', T1:'T₁ = T₂V₁ ÷ V₂' },
+      gl: { P2:'P₂ = P₁T₂ ÷ T₁', T2:'T₂ = T₁P₂ ÷ P₁', P1:'P₁ = P₂T₁ ÷ T₂', T1:'T₁ = T₂P₁ ÷ P₂' },
+      cg: {
+        P2:'P₂ = P₁V₁T₂ ÷ (T₁V₂)', V2:'V₂ = P₁V₁T₂ ÷ (T₁P₂)', T2:'T₂ = T₁P₂V₂ ÷ (P₁V₁)',
+        P1:'P₁ = P₂V₂T₁ ÷ (T₂V₁)', V1:'V₁ = P₂V₂T₁ ÷ (T₂P₁)', T1:'T₁ = T₂P₁V₁ ÷ (P₂V₂)',
+      },
+      ig: { P:'P = nRT ÷ V', V:'V = nRT ÷ P', n:'n = PV ÷ (RT)', T:'T = PV ÷ (nR)' },
+    };
+    if (!gasVarSets[calc]) return;
+    const fdEl = document.getElementById(`${calc}-formula-disp`);
+    if (fdEl && gasFormulae[calc]) fdEl.textContent = gasFormulae[calc][solve] || fdEl.textContent;
+    gasVarSets[calc].forEach(v => {
+      const wrap = document.getElementById(`${calc}-${v}-wrap`);
+      const inp  = document.getElementById(`${calc}-${v}`);
+      if (!wrap || !inp) return;
+      const isTarget = v === solve;
+      wrap.classList.toggle('disabled', isTarget);
+      inp.disabled = isTarget;
+      inp.placeholder = isTarget ? 'calculated' : inp.getAttribute('data-default-ph') || 'enter value';
+    });
+    hideResultsGas(calc);
+  }
+
+  // Extend the global sf-btn handler to include gas calcs
+  document.querySelectorAll('#gasModule .sf-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const calc  = btn.dataset.calc;
+      const solve = btn.dataset.solve;
+      document.querySelectorAll(`#gasModule .sf-btn[data-calc="${calc}"]`).forEach(b =>
+        b.classList.toggle('active', b === btn));
+      updateGasSolveFor(calc, solve);
+    });
+  });
+
+  // Also capture R unit changes for ideal gas
+  document.getElementById('ig-R-sel').addEventListener('change', () => {
+    const unitMap = { '0.08206':'atm', '8.314':'kPa', '62.364':'mmHg' };
+    const sel = document.getElementById('ig-R-sel').value;
+    const puEl = document.getElementById('ig-P-unit');
+    if (puEl) puEl.textContent = unitMap[sel] || 'atm';
+    hideResultsGas('ig');
+  });
+
+  // ── Reset helper ──
+  function resetGas(calc) {
+    const panelMap = {
+      bl:'panel-gas-boyle', cl:'panel-gas-charles',
+      gl:'panel-gas-gaylussac', cg:'panel-gas-combined', ig:'panel-gas-ideal'
+    };
+    const panel = document.getElementById(panelMap[calc]);
+    if (panel) panel.querySelectorAll('input[type="number"]').forEach(i => { i.value = ''; });
+    if (calc === 'ig') document.getElementById('ig-R-sel').selectedIndex = 0;
+    hideResultsGas(calc);
+    clearErrorGas(calc);
+    const firstSF = document.querySelector(`#gasModule .sf-btn[data-calc="${calc}"]`);
+    if (firstSF) firstSF.click();
+  }
+
+  /* ─────────────────────────────────────────────
+     HELPER: get a numeric input value, validate > 0
+     Returns the number or NaN.
+  ───────────────────────────────────────────── */
+  function gv(id) { return parseFloat(document.getElementById(id).value); }
+
+  /* ══════════════════════════════════════════════════
+     CALCULATOR 1 — Boyle's Law   P₁V₁ = P₂V₂
+  ══════════════════════════════════════════════════ */
+  function calcBL() {
+    clearErrorGas('bl');
+    const solve = document.querySelector('#gasModule .sf-btn.active[data-calc="bl"]')?.dataset.solve ?? 'P2';
+    const inputs = { P1: gv('bl-P1'), V1: gv('bl-V1'), P2: gv('bl-P2'), V2: gv('bl-V2') };
+    const needed = { P2:['P1','V1','V2'], V2:['P1','V1','P2'], P1:['P2','V2','V1'], V1:['P2','V2','P1'] };
+    for (const v of needed[solve]) {
+      if (isNaN(inputs[v]) || inputs[v] <= 0)
+        return showErrorGas('bl', `${v} must be a positive number.`);
+    }
+    const { P1, V1, P2, V2 } = inputs;
+    const results = {
+      P2: () => {
+        const r = (P1 * V1) / V2;
+        showResultGas('bl', 'Final Pressure (P₂)', fmt(r), 'same unit as P₁', [
+          { title: 'Write Boyle\'s Law', expr: 'P₁V₁ = P₂V₂', note: 'At constant temperature, pressure and volume are inversely proportional.' },
+          { title: 'Rearrange for P₂', expr: 'P₂ = P₁V₁ ÷ V₂' },
+          { title: 'Substitute known values', expr: `P₂ = (${fmt(P1)} × ${fmt(V1)}) ÷ ${fmt(V2)}` },
+          { title: 'Calculate result', expr: `P₂ = ${fmt(P1 * V1)} ÷ ${fmt(V2)} = ${fmt(r)}`, note: `As volume ${V2 > V1 ? 'increased' : 'decreased'}, pressure ${V2 > V1 ? 'decreased' : 'increased'} — inverse relationship confirmed.` },
+        ]);
+      },
+      V2: () => {
+        const r = (P1 * V1) / P2;
+        showResultGas('bl', 'Final Volume (V₂)', fmt(r), 'same unit as V₁', [
+          { title: 'Write Boyle\'s Law', expr: 'P₁V₁ = P₂V₂', note: 'Volume and pressure are inversely proportional at constant T.' },
+          { title: 'Rearrange for V₂', expr: 'V₂ = P₁V₁ ÷ P₂' },
+          { title: 'Substitute known values', expr: `V₂ = (${fmt(P1)} × ${fmt(V1)}) ÷ ${fmt(P2)}` },
+          { title: 'Calculate result', expr: `V₂ = ${fmt(P1 * V1)} ÷ ${fmt(P2)} = ${fmt(r)}`, note: `The gas ${r > V1 ? 'expanded' : 'compressed'} from ${fmt(V1)} to ${fmt(r)}.` },
+        ]);
+      },
+      P1: () => {
+        const r = (P2 * V2) / V1;
+        showResultGas('bl', 'Initial Pressure (P₁)', fmt(r), 'same unit as P₂', [
+          { title: 'Write Boyle\'s Law', expr: 'P₁V₁ = P₂V₂' },
+          { title: 'Rearrange for P₁', expr: 'P₁ = P₂V₂ ÷ V₁' },
+          { title: 'Substitute values', expr: `P₁ = (${fmt(P2)} × ${fmt(V2)}) ÷ ${fmt(V1)}` },
+          { title: 'Calculate result', expr: `P₁ = ${fmt(r)}` },
+        ]);
+      },
+      V1: () => {
+        const r = (P2 * V2) / P1;
+        showResultGas('bl', 'Initial Volume (V₁)', fmt(r), 'same unit as V₂', [
+          { title: 'Write Boyle\'s Law', expr: 'P₁V₁ = P₂V₂' },
+          { title: 'Rearrange for V₁', expr: 'V₁ = P₂V₂ ÷ P₁' },
+          { title: 'Substitute values', expr: `V₁ = (${fmt(P2)} × ${fmt(V2)}) ÷ ${fmt(P1)}` },
+          { title: 'Calculate result', expr: `V₁ = ${fmt(r)}` },
+        ]);
+      },
+    };
+    results[solve]();
+  }
+
+  /* ══════════════════════════════════════════════════
+     CALCULATOR 2 — Charles' Law   V₁/T₁ = V₂/T₂
+  ══════════════════════════════════════════════════ */
+  function calcCL() {
+    clearErrorGas('cl');
+    const solve = document.querySelector('#gasModule .sf-btn.active[data-calc="cl"]')?.dataset.solve ?? 'V2';
+    const inputs = { V1: gv('cl-V1'), T1: gv('cl-T1'), V2: gv('cl-V2'), T2: gv('cl-T2') };
+    const needed = { V2:['V1','T1','T2'], T2:['V1','T1','V2'], V1:['V2','T1','T2'], T1:['V1','T2','V2'] };
+    for (const v of needed[solve]) {
+      if (isNaN(inputs[v]) || inputs[v] <= 0)
+        return showErrorGas('cl', `${v} must be a positive number. Temperature must be in Kelvin (K > 0).`);
+    }
+    const { V1, T1, V2, T2 } = inputs;
+    const results = {
+      V2: () => {
+        const r = (V1 * T2) / T1;
+        const dT = T2 - T1;
+        showResultGas('cl', 'Final Volume (V₂)', fmt(r), 'same unit as V₁', [
+          { title: 'Write Charles\' Law', expr: 'V₁/T₁ = V₂/T₂', note: 'At constant pressure, volume is directly proportional to absolute temperature.' },
+          { title: 'Rearrange for V₂', expr: 'V₂ = V₁ × T₂ ÷ T₁' },
+          { title: 'Substitute values', expr: `V₂ = ${fmt(V1)} × ${fmt(T2)} ÷ ${fmt(T1)}` },
+          { title: 'Calculate result', expr: `V₂ = ${fmt(r)}`, note: `Temperature ${dT > 0 ? 'rose' : 'dropped'} by ${fmt(Math.abs(dT))} K → volume ${r > V1 ? 'increased' : 'decreased'} from ${fmt(V1)} to ${fmt(r)}.` },
+        ]);
+      },
+      T2: () => {
+        const r = (T1 * V2) / V1;
+        showResultGas('cl', 'Final Temperature (T₂)', fmt(r), 'K', [
+          { title: 'Write Charles\' Law', expr: 'V₁/T₁ = V₂/T₂' },
+          { title: 'Rearrange for T₂', expr: 'T₂ = T₁ × V₂ ÷ V₁' },
+          { title: 'Substitute values', expr: `T₂ = ${fmt(T1)} × ${fmt(V2)} ÷ ${fmt(V1)}` },
+          { title: 'Calculate result', expr: `T₂ = ${fmt(r)} K  (${fmt(r - 273.15)} °C)`, note: `To convert: °C = K − 273.15` },
+        ]);
+      },
+      V1: () => {
+        const r = (V2 * T1) / T2;
+        showResultGas('cl', 'Initial Volume (V₁)', fmt(r), 'same unit as V₂', [
+          { title: 'Write Charles\' Law', expr: 'V₁/T₁ = V₂/T₂' },
+          { title: 'Rearrange for V₁', expr: 'V₁ = V₂ × T₁ ÷ T₂' },
+          { title: 'Substitute values', expr: `V₁ = ${fmt(V2)} × ${fmt(T1)} ÷ ${fmt(T2)}` },
+          { title: 'Calculate result', expr: `V₁ = ${fmt(r)}` },
+        ]);
+      },
+      T1: () => {
+        const r = (T2 * V1) / V2;
+        showResultGas('cl', 'Initial Temperature (T₁)', fmt(r), 'K', [
+          { title: 'Write Charles\' Law', expr: 'V₁/T₁ = V₂/T₂' },
+          { title: 'Rearrange for T₁', expr: 'T₁ = T₂ × V₁ ÷ V₂' },
+          { title: 'Substitute values', expr: `T₁ = ${fmt(T2)} × ${fmt(V1)} ÷ ${fmt(V2)}` },
+          { title: 'Calculate result', expr: `T₁ = ${fmt(r)} K  (${fmt(r - 273.15)} °C)` },
+        ]);
+      },
+    };
+    results[solve]();
+  }
+
+  /* ══════════════════════════════════════════════════
+     CALCULATOR 3 — Gay-Lussac's Law   P₁/T₁ = P₂/T₂
+  ══════════════════════════════════════════════════ */
+  function calcGL() {
+    clearErrorGas('gl');
+    const solve = document.querySelector('#gasModule .sf-btn.active[data-calc="gl"]')?.dataset.solve ?? 'P2';
+    const inputs = { P1: gv('gl-P1'), T1: gv('gl-T1'), P2: gv('gl-P2'), T2: gv('gl-T2') };
+    const needed = { P2:['P1','T1','T2'], T2:['P1','T1','P2'], P1:['P2','T1','T2'], T1:['P1','T2','P2'] };
+    for (const v of needed[solve]) {
+      if (isNaN(inputs[v]) || inputs[v] <= 0)
+        return showErrorGas('gl', `${v} must be a positive number. Temperature must be in Kelvin.`);
+    }
+    const { P1, T1, P2, T2 } = inputs;
+    const results = {
+      P2: () => {
+        const r = (P1 * T2) / T1;
+        showResultGas('gl', 'Final Pressure (P₂)', fmt(r), 'same unit as P₁', [
+          { title: 'Write Gay-Lussac\'s Law', expr: 'P₁/T₁ = P₂/T₂', note: 'At constant volume, pressure is directly proportional to absolute temperature.' },
+          { title: 'Rearrange for P₂', expr: 'P₂ = P₁ × T₂ ÷ T₁' },
+          { title: 'Substitute values', expr: `P₂ = ${fmt(P1)} × ${fmt(T2)} ÷ ${fmt(T1)}` },
+          { title: 'Calculate result', expr: `P₂ = ${fmt(r)}`, note: `Temperature ${T2 > T1 ? 'increased' : 'decreased'} → pressure ${r > P1 ? 'increased' : 'decreased'}: direct proportionality confirmed.` },
+        ]);
+      },
+      T2: () => {
+        const r = (T1 * P2) / P1;
+        showResultGas('gl', 'Final Temperature (T₂)', fmt(r), 'K', [
+          { title: 'Write Gay-Lussac\'s Law', expr: 'P₁/T₁ = P₂/T₂' },
+          { title: 'Rearrange for T₂', expr: 'T₂ = T₁ × P₂ ÷ P₁' },
+          { title: 'Substitute values', expr: `T₂ = ${fmt(T1)} × ${fmt(P2)} ÷ ${fmt(P1)}` },
+          { title: 'Calculate result', expr: `T₂ = ${fmt(r)} K  (${fmt(r - 273.15)} °C)` },
+        ]);
+      },
+      P1: () => {
+        const r = (P2 * T1) / T2;
+        showResultGas('gl', 'Initial Pressure (P₁)', fmt(r), 'same unit as P₂', [
+          { title: 'Write Gay-Lussac\'s Law', expr: 'P₁/T₁ = P₂/T₂' },
+          { title: 'Rearrange for P₁', expr: 'P₁ = P₂ × T₁ ÷ T₂' },
+          { title: 'Substitute values', expr: `P₁ = ${fmt(P2)} × ${fmt(T1)} ÷ ${fmt(T2)}` },
+          { title: 'Calculate result', expr: `P₁ = ${fmt(r)}` },
+        ]);
+      },
+      T1: () => {
+        const r = (T2 * P1) / P2;
+        showResultGas('gl', 'Initial Temperature (T₁)', fmt(r), 'K', [
+          { title: 'Write Gay-Lussac\'s Law', expr: 'P₁/T₁ = P₂/T₂' },
+          { title: 'Rearrange for T₁', expr: 'T₁ = T₂ × P₁ ÷ P₂' },
+          { title: 'Substitute values', expr: `T₁ = ${fmt(T2)} × ${fmt(P1)} ÷ ${fmt(P2)}` },
+          { title: 'Calculate result', expr: `T₁ = ${fmt(r)} K  (${fmt(r - 273.15)} °C)` },
+        ]);
+      },
+    };
+    results[solve]();
+  }
+
+  /* ══════════════════════════════════════════════════
+     CALCULATOR 4 — Combined Gas Law   P₁V₁/T₁ = P₂V₂/T₂
+  ══════════════════════════════════════════════════ */
+  function calcCG() {
+    clearErrorGas('cg');
+    const solve = document.querySelector('#gasModule .sf-btn.active[data-calc="cg"]')?.dataset.solve ?? 'P2';
+    const inputs = {
+      P1: gv('cg-P1'), V1: gv('cg-V1'), T1: gv('cg-T1'),
+      P2: gv('cg-P2'), V2: gv('cg-V2'), T2: gv('cg-T2'),
+    };
+    const needed = {
+      P2:['P1','V1','T1','V2','T2'], V2:['P1','V1','T1','P2','T2'], T2:['P1','V1','T1','P2','V2'],
+      P1:['P2','V2','T2','V1','T1'], V1:['P2','V2','T2','P1','T1'], T1:['P2','V2','T2','P1','V1'],
+    };
+    const TvarsNeeded = new Set(['T1','T2']);
+    for (const v of needed[solve]) {
+      if (isNaN(inputs[v]) || inputs[v] <= 0) {
+        const hint = TvarsNeeded.has(v) ? ' Temperature must be in Kelvin (K > 0).' : '';
+        return showErrorGas('cg', `${v} must be a positive number.${hint}`);
+      }
+    }
+    const { P1, V1, T1, P2, V2, T2 } = inputs;
+    const lhs = (P1 * V1) / T1;
+    const results = {
+      P2: () => {
+        const r = (lhs * T2) / V2;
+        showResultGas('cg', 'Final Pressure (P₂)', fmt(r), 'same unit as P₁', [
+          { title: 'Write the Combined Gas Law', expr: 'P₁V₁/T₁ = P₂V₂/T₂', note: 'Unifies Boyle\'s, Charles\', and Gay-Lussac\'s laws. Amount of gas is constant.' },
+          { title: 'Rearrange for P₂', expr: 'P₂ = P₁V₁T₂ ÷ (T₁V₂)' },
+          { title: 'Calculate left-hand side', expr: `P₁V₁/T₁ = (${fmt(P1)} × ${fmt(V1)}) ÷ ${fmt(T1)} = ${fmt(lhs)}` },
+          { title: 'Solve for P₂', expr: `P₂ = ${fmt(lhs)} × ${fmt(T2)} ÷ ${fmt(V2)} = ${fmt(r)}` },
+        ]);
+      },
+      V2: () => {
+        const r = (lhs * T2) / P2;
+        showResultGas('cg', 'Final Volume (V₂)', fmt(r), 'same unit as V₁', [
+          { title: 'Write the Combined Gas Law', expr: 'P₁V₁/T₁ = P₂V₂/T₂' },
+          { title: 'Rearrange for V₂', expr: 'V₂ = P₁V₁T₂ ÷ (T₁P₂)' },
+          { title: 'Calculate left-hand side', expr: `P₁V₁/T₁ = ${fmt(lhs)}` },
+          { title: 'Solve for V₂', expr: `V₂ = ${fmt(lhs)} × ${fmt(T2)} ÷ ${fmt(P2)} = ${fmt(r)}` },
+        ]);
+      },
+      T2: () => {
+        const r = (P2 * V2) / lhs;
+        showResultGas('cg', 'Final Temperature (T₂)', fmt(r), 'K', [
+          { title: 'Write the Combined Gas Law', expr: 'P₁V₁/T₁ = P₂V₂/T₂' },
+          { title: 'Rearrange for T₂', expr: 'T₂ = P₂V₂T₁ ÷ (P₁V₁)' },
+          { title: 'Calculate left-hand side', expr: `P₁V₁/T₁ = ${fmt(lhs)}` },
+          { title: 'Solve for T₂', expr: `T₂ = (${fmt(P2)} × ${fmt(V2)}) ÷ ${fmt(lhs)} = ${fmt(r)} K  (${fmt(r - 273.15)} °C)` },
+        ]);
+      },
+      P1: () => {
+        const rhs = (P2 * V2) / T2;
+        const r   = (rhs * T1) / V1;
+        showResultGas('cg', 'Initial Pressure (P₁)', fmt(r), 'same unit as P₂', [
+          { title: 'Write the Combined Gas Law', expr: 'P₁V₁/T₁ = P₂V₂/T₂' },
+          { title: 'Rearrange for P₁', expr: 'P₁ = P₂V₂T₁ ÷ (T₂V₁)' },
+          { title: 'Calculate right-hand side', expr: `P₂V₂/T₂ = (${fmt(P2)} × ${fmt(V2)}) ÷ ${fmt(T2)} = ${fmt(rhs)}` },
+          { title: 'Solve for P₁', expr: `P₁ = ${fmt(rhs)} × ${fmt(T1)} ÷ ${fmt(V1)} = ${fmt(r)}` },
+        ]);
+      },
+      V1: () => {
+        const rhs = (P2 * V2) / T2;
+        const r   = (rhs * T1) / P1;
+        showResultGas('cg', 'Initial Volume (V₁)', fmt(r), 'same unit as V₂', [
+          { title: 'Write the Combined Gas Law', expr: 'P₁V₁/T₁ = P₂V₂/T₂' },
+          { title: 'Rearrange for V₁', expr: 'V₁ = P₂V₂T₁ ÷ (T₂P₁)' },
+          { title: 'Calculate right-hand side', expr: `P₂V₂/T₂ = ${fmt(rhs)}` },
+          { title: 'Solve for V₁', expr: `V₁ = ${fmt(rhs)} × ${fmt(T1)} ÷ ${fmt(P1)} = ${fmt(r)}` },
+        ]);
+      },
+      T1: () => {
+        const rhs = (P2 * V2) / T2;
+        const r   = (P1 * V1) / rhs;
+        showResultGas('cg', 'Initial Temperature (T₁)', fmt(r), 'K', [
+          { title: 'Write the Combined Gas Law', expr: 'P₁V₁/T₁ = P₂V₂/T₂' },
+          { title: 'Rearrange for T₁', expr: 'T₁ = P₁V₁T₂ ÷ (P₂V₂)' },
+          { title: 'Calculate right-hand side', expr: `P₂V₂/T₂ = ${fmt(rhs)}` },
+          { title: 'Solve for T₁', expr: `T₁ = (${fmt(P1)} × ${fmt(V1)}) ÷ ${fmt(rhs)} = ${fmt(r)} K  (${fmt(r - 273.15)} °C)` },
+        ]);
+      },
+    };
+    results[solve]();
+  }
+
+  /* ══════════════════════════════════════════════════
+     CALCULATOR 5 — Ideal Gas Law   PV = nRT
+  ══════════════════════════════════════════════════ */
+  function calcIG() {
+    clearErrorGas('ig');
+    const solve = document.querySelector('#gasModule .sf-btn.active[data-calc="ig"]')?.dataset.solve ?? 'P';
+    const R     = parseFloat(document.getElementById('ig-R-sel').value);
+    const Rstr  = document.getElementById('ig-R-sel').options[document.getElementById('ig-R-sel').selectedIndex].text.split(' — ')[0];
+    const pUnit = document.getElementById('ig-P-unit').textContent;
+
+    const inputs = { P: gv('ig-P'), V: gv('ig-V'), n: gv('ig-n'), T: gv('ig-T') };
+    const needed = { P:['V','n','T'], V:['P','n','T'], n:['P','V','T'], T:['P','V','n'] };
+
+    for (const v of needed[solve]) {
+      if (isNaN(inputs[v]) || inputs[v] <= 0) {
+        const hint = v === 'T' ? ' Temperature must be in Kelvin (K > 0).' : '';
+        return showErrorGas('ig', `${v} must be a positive number.${hint}`);
+      }
+    }
+    const { P, V, n, T } = inputs;
+
+    const results = {
+      P: () => {
+        const r = (n * R * T) / V;
+        showResultGas('ig', 'Pressure (P)', fmt(r), pUnit, [
+          { title: 'Write the Ideal Gas Law', expr: 'PV = nRT', note: `Using R = ${Rstr}.` },
+          { title: 'Rearrange for P', expr: 'P = nRT ÷ V' },
+          { title: 'Substitute values', expr: `P = ${fmt(n)} mol × ${R} × ${fmt(T)} K ÷ ${fmt(V)} L` },
+          { title: 'Calculate nRT', expr: `nRT = ${fmt(n * R * T)} ${pUnit}·L` },
+          { title: 'Divide by V', expr: `P = ${fmt(n * R * T)} ÷ ${fmt(V)} = ${fmt(r)} ${pUnit}` },
+        ]);
+      },
+      V: () => {
+        const r = (n * R * T) / P;
+        showResultGas('ig', 'Volume (V)', fmt(r), 'L', [
+          { title: 'Write the Ideal Gas Law', expr: 'PV = nRT', note: `Using R = ${Rstr}.` },
+          { title: 'Rearrange for V', expr: 'V = nRT ÷ P' },
+          { title: 'Substitute values', expr: `V = ${fmt(n)} mol × ${R} × ${fmt(T)} K ÷ ${fmt(P)} ${pUnit}` },
+          { title: 'Calculate nRT', expr: `nRT = ${fmt(n * R * T)} ${pUnit}·L` },
+          { title: 'Divide by P', expr: `V = ${fmt(n * R * T)} ÷ ${fmt(P)} = ${fmt(r)} L` },
+        ]);
+      },
+      n: () => {
+        const r = (P * V) / (R * T);
+        showResultGas('ig', 'Moles of Gas (n)', fmt(r), 'mol', [
+          { title: 'Write the Ideal Gas Law', expr: 'PV = nRT', note: `Using R = ${Rstr}.` },
+          { title: 'Rearrange for n', expr: 'n = PV ÷ (RT)' },
+          { title: 'Substitute values', expr: `n = (${fmt(P)} ${pUnit} × ${fmt(V)} L) ÷ (${R} × ${fmt(T)} K)` },
+          { title: 'Calculate PV', expr: `PV = ${fmt(P * V)} ${pUnit}·L` },
+          { title: 'Calculate RT', expr: `RT = ${fmt(R * T)} ${pUnit}·L/mol` },
+          { title: 'Divide PV by RT', expr: `n = ${fmt(P * V)} ÷ ${fmt(R * T)} = ${fmt(r)} mol`, note: `${fmt(r)} mol of gas at ${fmt(T)} K and ${fmt(P)} ${pUnit} in ${fmt(V)} L.` },
+        ]);
+      },
+      T: () => {
+        const r = (P * V) / (n * R);
+        showResultGas('ig', 'Temperature (T)', fmt(r), 'K', [
+          { title: 'Write the Ideal Gas Law', expr: 'PV = nRT', note: `Using R = ${Rstr}.` },
+          { title: 'Rearrange for T', expr: 'T = PV ÷ (nR)' },
+          { title: 'Substitute values', expr: `T = (${fmt(P)} ${pUnit} × ${fmt(V)} L) ÷ (${fmt(n)} mol × ${R})` },
+          { title: 'Calculate PV', expr: `PV = ${fmt(P * V)} ${pUnit}·L` },
+          { title: 'Calculate nR', expr: `nR = ${fmt(n * R)} ${pUnit}·L/K` },
+          { title: 'Divide PV by nR', expr: `T = ${fmt(P * V)} ÷ ${fmt(n * R)} = ${fmt(r)} K  (${fmt(r - 273.15)} °C)` },
+        ]);
+      },
+    };
+    results[solve]();
   }
 </script>
 </body>
