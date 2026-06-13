@@ -350,6 +350,25 @@
   .breadcrumb span { color: var(--text-secondary); }
   .breadcrumb .bc-active { color: var(--accent-cyan); font-weight: 500; }
 
+  .breadcrumb .bc-root {
+    cursor: pointer;
+    transition: color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .breadcrumb .bc-root:hover {
+    color: var(--accent-cyan);
+  }
+
+  .breadcrumb .bc-sub {
+    color: var(--text-secondary);
+  }
+
+  .breadcrumb .bc-sub.bc-active-sub {
+    color: var(--accent-cyan);
+    font-weight: 500;
+  }
+
   .page-title {
     font-family: 'Orbitron', monospace;
     font-size: clamp(1.2rem, 4.5vw, 1.8rem);   /* fluid: 1.2rem at 360px → 1.8rem at 768px+ */
@@ -430,6 +449,123 @@
     background: var(--border);
   }
 
+  /* ── Back to Library control (modules) ── */
+  .back-to-library {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: 'Exo 2', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 9px 16px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .back-to-library:hover {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    background: rgba(0,212,255,0.05);
+  }
+
+  .back-to-library svg {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    .back-to-library {
+      width: 100%;
+      justify-content: center;
+      padding: 11px 16px;
+      font-size: 0.82rem;
+    }
+  }
+
+  /* ── First-time guidance banner ── */
+  .hub-hint {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--accent-cyan);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .hub-hint .hint-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .hub-hint strong {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .hub-hint .hint-dismiss {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 4px 6px;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .hub-hint .hint-dismiss:hover { color: var(--accent-red); }
+
+  @media (max-width: 768px) {
+    .hub-hint {
+      font-size: 0.78rem;
+      padding: 10px 12px;
+      gap: 8px;
+    }
+  }
+
+  /* ── Disabled / Coming-soon nav items ── */
+  .nav-item.disabled-nav {
+    cursor: pointer;
+  }
+
+  .nav-item.disabled-nav .nav-label,
+  .nav-item.disabled-nav .nav-icon {
+    opacity: 0.55;
+  }
+
+  .nav-item.disabled-nav:hover {
+    background: var(--bg-hover);
+    border-left-color: var(--border-glow);
+  }
+
+  .nav-item.disabled-nav .nav-soon-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--accent-amber);
+    background: rgba(255,179,0,0.08);
+    border: 1px solid rgba(255,179,0,0.2);
+    border-radius: 10px;
+    padding: 1px 7px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
   /* ── CATEGORY HERO CARDS ── */
   .cat-grid {
     display: grid;
@@ -447,6 +583,26 @@
     transition: all 0.22s;
     position: relative;
     overflow: hidden;
+  }
+
+  .cat-card::after {
+    content: 'Tap to filter';
+    position: absolute;
+    bottom: 8px; right: 12px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    opacity: 0;
+    transition: opacity 0.18s;
+    pointer-events: none;
+  }
+
+  .cat-card:hover::after { opacity: 0.7; }
+
+  @media (max-width: 768px) {
+    .cat-card::after { display: none; }
   }
 
   .cat-card::before {
@@ -647,6 +803,11 @@
     pointer-events: none;
   }
 
+  /* Subtle pulse on calculator-enabled cards to draw the eye to interactive buttons */
+  .formula-card:hover .btn-calc:not(:disabled) {
+    box-shadow: var(--glow-cyan);
+  }
+
   .btn-calc svg { width: 12px; height: 12px; }
 
   /* Coming-soon overlay */
@@ -674,6 +835,50 @@
   .empty-state .empty-icon { font-size: 3rem; margin-bottom: 14px; }
   .empty-state h3 { font-size: 1rem; color: var(--text-primary); margin-bottom: 6px; }
   .empty-state p  { font-size: 0.82rem; color: var(--text-secondary); }
+
+  /* ── COMING SOON MODULE PANEL ── */
+  #comingSoonModule {
+    display: none;
+    animation: fadeUp 0.35s ease both;
+  }
+  #comingSoonModule.visible { display: block; }
+
+  .coming-soon-panel {
+    background: var(--bg-card);
+    border: 1px dashed var(--border);
+    border-radius: 14px;
+    padding: 60px 24px;
+    text-align: center;
+    color: var(--text-secondary);
+  }
+
+  .coming-soon-panel .cs-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  .coming-soon-panel h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+
+  .coming-soon-panel p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .coming-soon-panel { padding: 44px 18px; }
+    .coming-soon-panel .cs-icon { font-size: 2.4rem; }
+    .coming-soon-panel h3 { font-size: 1rem; }
+    .coming-soon-panel p { font-size: 0.8rem; }
+  }
 
   /* ────────────────── RESPONSIVE ────────────────── */
   /* ══════════════════════════════════════════
@@ -862,7 +1067,21 @@
     background: rgba(0,212,255,0.12);
     color: var(--accent-cyan);
     box-shadow: inset 0 0 0 1px rgba(0,212,255,0.3);
+    position: relative;
   }
+
+  .mol-tab.active::after {
+    content: '';
+    position: absolute;
+    left: 8px; right: 8px; bottom: 3px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--accent-cyan);
+    opacity: 0.6;
+  }
+
+  #solModule .mol-tab.active::after  { background: var(--accent-teal); }
+  #gasModule .mol-tab.active::after  { background: var(--accent-gas); }
 
   .mol-tab .tab-icon { font-size: 0.95rem; }
 
@@ -1270,13 +1489,28 @@
     background: var(--bg-card);
     border: 1px dashed var(--border);
     border-radius: 14px;
-    padding: 44px 20px;
-    text-align: center;
-    color: var(--text-secondary);    /* was text-muted */
+    padding: 22px 20px;
+    text-align: left;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
 
-  .solution-placeholder .ph-icon { font-size: 2.2rem; margin-bottom: 12px; opacity: 0.6; }
-  .solution-placeholder p { font-size: 0.82rem; line-height: 1.6; color: var(--text-secondary); }
+  .solution-placeholder .ph-icon {
+    font-size: 1.7rem;
+    margin-bottom: 0;
+    opacity: 0.6;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .solution-placeholder p {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin: 0;
+  }
 
   /* Error state */
   .error-box {
@@ -1377,26 +1611,51 @@
     .field-input-wrap input { padding: 12px 10px; font-size: 0.88rem; }
     .field-unit { padding: 0 10px; font-size: 0.7rem; }
 
-    /* Tab bar: wrap and fill */
+    /* Tab bar: horizontal scroll, no wrap — scales to any tab count */
     .mol-tabs {
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       width: 100%;
+      max-width: 100%;
       margin-bottom: 20px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x proximity;
     }
     .mol-tab {
-      flex: 1;
+      flex: 0 0 auto;
       min-width: 0;
       justify-content: center;
-      padding: 9px 8px;
-      font-size: 0.72rem;
+      padding: 9px 14px;
+      font-size: 0.74rem;
       letter-spacing: 0.03em;
+      white-space: nowrap;
+      scroll-snap-align: start;
+      min-height: 44px;
     }
     .mol-tab .tab-icon { display: none; }   /* hide emoji on very small tabs */
+
+    /* When a module has 4 or fewer tabs, fill width evenly instead of scrolling */
+    .mol-tabs.tabs-fill {
+      overflow-x: visible;
+    }
+    .mol-tabs.tabs-fill .mol-tab {
+      flex: 1 1 0;
+    }
 
     /* Result value: clamp already handles this, but cap padding too */
     .result-hero { padding: 20px 16px 18px; }
     .steps-list { padding: 14px 14px; }
     .step-expr { font-size: 0.82rem; padding: 7px 10px; }
+
+    /* Empty placeholder: stack icon above text on narrow screens */
+    .solution-placeholder {
+      padding: 18px 16px;
+      gap: 10px;
+    }
+    .solution-placeholder .ph-icon { font-size: 1.5rem; }
+    .solution-placeholder p { font-size: 0.8rem; }
+
+    .mol-tab.active::after { left: 6px; right: 6px; }
 
     /* Eq-hint box: ensure it doesn't overflow */
     .eq-hint { font-size: 0.72rem; padding: 9px 12px; }
@@ -1418,8 +1677,15 @@
     .cat-name { font-size: 0.82rem; }
     .formula-card { padding: 16px 14px 14px; }
     .calc-input-card { padding: 16px 12px; }
-    .mol-tab { padding: 8px 6px; font-size: 0.68rem; }
+    .mol-tab { padding: 8px 10px; font-size: 0.7rem; min-height: 42px; }
+    .mol-tabs::-webkit-scrollbar { display: none; }
     .result-value { font-size: 1.5rem; }
+    .solution-placeholder {
+      flex-direction: column;
+      text-align: center;
+      gap: 8px;
+      padding: 16px 14px;
+    }
   }
 
   /* ════════════════════════════════════════
@@ -1438,7 +1704,7 @@
     }
     /* Mol-tabs full width on tablet too */
     .mol-tabs { width: 100%; max-width: 100%; }
-    .mol-tab { flex: 1; justify-content: center; }
+    .mol-tabs.tabs-fill .mol-tab { flex: 1; justify-content: center; }
   }
 
   .hamburger {
@@ -1551,18 +1817,20 @@
       <span class="nav-badge">24</span>
     </div>
 
-    <div class="nav-item" data-category="recent">
+    <div class="nav-item disabled-nav" data-category="recent" data-soon="true">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <circle cx="12" cy="12" r="9"/><polyline points="12,6 12,12 16,14"/>
       </svg>
       <span class="nav-label">Recent</span>
+      <span class="nav-soon-badge">Soon</span>
     </div>
 
-    <div class="nav-item" data-category="bookmarks">
+    <div class="nav-item disabled-nav" data-category="bookmarks" data-soon="true">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
       </svg>
       <span class="nav-label">Bookmarks</span>
+      <span class="nav-soon-badge">Soon</span>
     </div>
 
     <div class="sidebar-divider"></div>
@@ -1601,7 +1869,7 @@
     <div class="sidebar-divider"></div>
     <div class="sidebar-section-label">Tools</div>
 
-    <div class="nav-item" data-category="periodic">
+    <div class="nav-item disabled-nav" data-category="periodic" data-soon="true">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <rect x="3" y="3" width="4" height="4" rx="0.5"/><rect x="9" y="3" width="4" height="4" rx="0.5"/>
         <rect x="15" y="3" width="4" height="4" rx="0.5"/><rect x="3" y="9" width="4" height="4" rx="0.5"/>
@@ -1609,13 +1877,15 @@
         <rect x="3" y="15" width="4" height="4" rx="0.5"/><rect x="9" y="15" width="4" height="4" rx="0.5"/>
       </svg>
       <span class="nav-label">Periodic Table</span>
+      <span class="nav-soon-badge">Soon</span>
     </div>
 
-    <div class="nav-item" data-category="constants">
+    <div class="nav-item disabled-nav" data-category="constants" data-soon="true">
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
         <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
       </svg>
       <span class="nav-label">Constants</span>
+      <span class="nav-soon-badge">Soon</span>
     </div>
 
   </nav>
@@ -1625,9 +1895,11 @@
 
     <div class="page-header">
       <div class="breadcrumb">
-        <span>ChemSphere</span>
+        <span class="bc-root" onclick="setCategory('all')">ChemSphere</span>
         <span>›</span>
         <span class="bc-active" id="breadcrumbActive">All Formulas</span>
+        <span id="breadcrumbSepSub" style="display:none">›</span>
+        <span class="bc-sub bc-active-sub" id="breadcrumbSub" style="display:none"></span>
       </div>
       <h1 class="page-title" id="pageTitle">Formula <em>Library</em></h1>
       <p class="page-subtitle" id="pageSubtitle">Browse and calculate with essential chemistry formulas across all topics.</p>
@@ -1653,6 +1925,13 @@
           <div class="stat-lbl">Calculations</div>
         </div>
       </div>
+    </div>
+
+    <!-- First-time guidance -->
+    <div class="hub-hint" id="hubHint">
+      <span class="hint-icon">💡</span>
+      <span><strong>Tip:</strong> Tap a category below to filter formulas, then press <strong>Open</strong> on any card to launch its interactive calculator.</span>
+      <button class="hint-dismiss" id="hubHintDismiss" aria-label="Dismiss tip">✕</button>
     </div>
 
     <!-- Category quick-select -->
@@ -1697,8 +1976,13 @@
   <!-- ══════════ MOLE CONCEPT MODULE ══════════ -->
   <div id="moleModule">
 
+    <button class="back-to-library" onclick="setCategory('all')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Formula Library
+    </button>
+
     <!-- Sub-tab navigation -->
-    <div class="mol-tabs" role="tablist">
+    <div class="mol-tabs tabs-fill" role="tablist">
       <button class="mol-tab active" data-panel="mole-calc" role="tab">
         <span class="tab-icon">⚛️</span> Mole Calculator
       </button>
@@ -1957,7 +2241,12 @@
   ══════════════════════════════════════════ -->
   <div id="solModule">
 
-    <div class="mol-tabs" role="tablist">
+    <button class="back-to-library" onclick="setCategory('all')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Formula Library
+    </button>
+
+    <div class="mol-tabs tabs-fill" role="tablist">
       <button class="mol-tab active" data-sol-panel="sol-molarity" role="tab">
         <span class="tab-icon">🧪</span> Molarity
       </button>
@@ -2273,6 +2562,11 @@
        GAS LAWS MODULE
   ══════════════════════════════════════════ -->
   <div id="gasModule">
+
+    <button class="back-to-library" onclick="setCategory('all')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Formula Library
+    </button>
 
     <div class="mol-tabs" role="tablist">
       <button class="mol-tab active" data-gas-panel="gas-boyle" role="tab">
@@ -2731,6 +3025,24 @@
 
   </div><!-- /#gasModule -->
 
+  <!-- ══════════════════════════════════════════
+       COMING SOON MODULE (Recent / Bookmarks / Periodic Table / Constants)
+  ══════════════════════════════════════════ -->
+  <div id="comingSoonModule">
+
+    <button class="back-to-library" onclick="setCategory('all')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Formula Library
+    </button>
+
+    <div class="coming-soon-panel">
+      <div class="cs-icon" id="csIcon">🚧</div>
+      <h3 id="csTitle">Coming Soon</h3>
+      <p id="csText">This feature is under development and will be available in a future update.</p>
+    </div>
+
+  </div><!-- /#comingSoonModule -->
+
   </main>
 </div>
 
@@ -2780,7 +3092,53 @@
     gas:          { label: 'Gas Laws',       subtitle: 'Pressure, volume, and temperature relationships for gases.' },
     acids:        { label: 'Acids & Bases',  subtitle: 'pH, pOH, and buffer equilibria formulas.' },
     stoichiometry:{ label: 'Stoichiometry',  subtitle: 'Mole ratios, yield, and limiting reagent calculations.' },
+    recent:       { label: 'Recent',         subtitle: 'Your recently viewed formulas and calculators.' },
+    bookmarks:    { label: 'Bookmarks',      subtitle: 'Formulas and calculators you\'ve saved for quick access.' },
+    periodic:     { label: 'Periodic Table', subtitle: 'Interactive periodic table of elements.' },
+    constants:    { label: 'Constants',      subtitle: 'Common physical and chemical constants reference.' },
   };
+
+  const COMING_SOON_META = {
+    recent:    { icon: '🕓', title: 'Recent — Coming Soon',         text: 'Your recently viewed formulas and calculators will appear here in a future update.' },
+    bookmarks: { icon: '🔖', title: 'Bookmarks — Coming Soon',      text: 'Saving and revisiting your favorite formulas will be available in a future update.' },
+    periodic:  { icon: '🧪', title: 'Periodic Table — Coming Soon', text: 'An interactive periodic table of elements is currently in development.' },
+    constants: { icon: '🔢', title: 'Constants — Coming Soon',      text: 'A quick-reference table of common physical and chemical constants is currently in development.' },
+  };
+
+  // Sub-tab label maps for breadcrumb depth
+  const MOLE_TAB_LABELS = {
+    'mole-calc':     'Mole Calculator',
+    'mass-mole':     'Mass–Mole Converter',
+    'particle-calc': 'Particle Calculator',
+  };
+  const SOL_TAB_LABELS = {
+    'sol-molarity':  'Molarity',
+    'sol-molality':  'Molality',
+    'sol-normality': 'Normality',
+    'sol-dilution':  'Dilution',
+  };
+  const GAS_TAB_LABELS = {
+    'gas-boyle':     "Boyle's Law",
+    'gas-charles':   "Charles' Law",
+    'gas-gaylussac': "Gay-Lussac's Law",
+    'gas-combined':  'Combined Gas Law',
+    'gas-ideal':     'Ideal Gas Law',
+  };
+
+  function setBreadcrumbSub(label) {
+    const sep = document.getElementById('breadcrumbSepSub');
+    const sub = document.getElementById('breadcrumbSub');
+    if (!sep || !sub) return;
+    if (label) {
+      sub.textContent = label;
+      sep.style.display = '';
+      sub.style.display = '';
+    } else {
+      sep.style.display = 'none';
+      sub.style.display = 'none';
+      sub.textContent = '';
+    }
+  }
 
   // ── STATE ──
   let activeCategory = 'all';
@@ -2804,13 +3162,22 @@
   document.querySelectorAll('.nav-item[data-category]').forEach(el => {
     el.addEventListener('click', () => {
       const cat = el.dataset.category;
-      if (['mole','solutions','gas','acids','stoichiometry','all'].includes(cat)) {
+      if (['mole','solutions','gas','acids','stoichiometry','all','recent','bookmarks','periodic','constants'].includes(cat)) {
         setCategory(cat);
       }
       // Close mobile sidebar
       document.getElementById('sidebar').classList.remove('open');
       document.getElementById('overlay').classList.remove('show');
     });
+  });
+
+  // Dismiss first-time hint
+  const hubHint = document.getElementById('hubHint');
+  document.getElementById('hubHintDismiss').addEventListener('click', () => {
+    if (hubHint) {
+      hubHint.style.display = 'none';
+      hubHint.dataset.dismissed = 'true';
+    }
   });
 
   document.querySelectorAll('.cat-card[data-category]').forEach(el => {
@@ -2857,11 +3224,12 @@
 
   // ── View switching ──
   function showView(view) {
-    const libraryEls = ['catGrid','formulaGrid','formulaGridLabel'];
+    const libraryEls = ['catGrid','formulaGrid','formulaGridLabel','hubHint'];
     const statsRow   = document.querySelector('.stats-row');
     const moleModule = document.getElementById('moleModule');
     const solModule  = document.getElementById('solModule');
     const gasModule  = document.getElementById('gasModule');
+    const csModule   = document.getElementById('comingSoonModule');
 
     // Hide everything first
     libraryEls.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
@@ -2870,6 +3238,7 @@
     moleModule.classList.remove('visible');
     solModule.classList.remove('visible');
     gasModule.classList.remove('visible');
+    csModule.classList.remove('visible');
 
     if (view === 'mole-module') {
       moleModule.classList.add('visible');
@@ -2877,9 +3246,16 @@
       solModule.classList.add('visible');
     } else if (view === 'gas-module') {
       gasModule.classList.add('visible');
+    } else if (view === 'coming-soon') {
+      csModule.classList.add('visible');
     } else {
       // library
-      libraryEls.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
+      libraryEls.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (id === 'hubHint' && el.dataset.dismissed === 'true') return;
+        el.style.display = '';
+      });
       document.querySelectorAll('.section-head').forEach(el => el.style.display = '');
       if (statsRow) statsRow.style.display = '';
     }
@@ -2896,21 +3272,37 @@
       rest.length ? `${w1} <em>${rest.join(' ')}</em>` : `<em>${w1}</em>`;
   }
 
-  // Override mole category to show module instead
-  function setCategory(cat) {
+  // Ensures sidebar nav, category cards, breadcrumb and title are all in sync for the given category
+  function syncActiveNav(cat) {
     activeCategory = cat;
     document.querySelectorAll('.nav-item[data-category]').forEach(el =>
       el.classList.toggle('active', el.dataset.category === cat));
     document.querySelectorAll('.cat-card[data-category]').forEach(el =>
       el.classList.toggle('active', el.dataset.category === cat));
     updatePageMeta();
+  }
+
+  // Override mole category to show module instead
+  function setCategory(cat) {
+    syncActiveNav(cat);
     if (cat === 'mole') {
       showView('mole-module');
+      activateMoleTab(document.querySelector('#moleModule .mol-tab.active')?.dataset.panel || 'mole-calc');
     } else if (cat === 'solutions') {
       showView('sol-module');
+      activateSolTab(document.querySelector('#solModule .mol-tab.active')?.dataset.solPanel || 'sol-molarity');
     } else if (cat === 'gas') {
       showView('gas-module');
+      activateGasTab(document.querySelector('#gasModule .mol-tab.active')?.dataset.gasPanel || 'gas-boyle');
+    } else if (COMING_SOON_META[cat]) {
+      const meta = COMING_SOON_META[cat];
+      document.getElementById('csIcon').textContent  = meta.icon;
+      document.getElementById('csTitle').textContent = meta.title;
+      document.getElementById('csText').textContent  = meta.text;
+      setBreadcrumbSub(null);
+      showView('coming-soon');
     } else {
+      setBreadcrumbSub(null);
       showView('library');
       renderCards();
     }
@@ -2997,10 +3389,12 @@
 
   // ── Sub-tab switching ──
   function activateMoleTab(panelId) {
+    if (activeCategory !== 'mole') syncActiveNav('mole');
     document.querySelectorAll('#moleModule .mol-tab').forEach(t =>
       t.classList.toggle('active', t.dataset.panel === panelId));
     document.querySelectorAll('#moleModule .mol-panel').forEach(p =>
       p.classList.toggle('active', p.id === 'panel-' + panelId));
+    setBreadcrumbSub(MOLE_TAB_LABELS[panelId] || '');
   }
 
   document.querySelectorAll('#moleModule .mol-tab').forEach(tab => {
@@ -3261,10 +3655,12 @@
 
   // ── Sol sub-tab switching ──
   function activateSolTab(panelId) {
+    if (activeCategory !== 'solutions') syncActiveNav('solutions');
     document.querySelectorAll('#solModule .mol-tab').forEach(t =>
       t.classList.toggle('active', t.dataset.solPanel === panelId));
     document.querySelectorAll('#solModule .mol-panel').forEach(p =>
       p.classList.toggle('active', p.id === 'panel-' + panelId));
+    setBreadcrumbSub(SOL_TAB_LABELS[panelId] || '');
   }
 
   document.querySelectorAll('#solModule .mol-tab').forEach(tab => {
@@ -3659,10 +4055,12 @@
 
   // ── Gas sub-tab switching ──
   function activateGasTab(panelId) {
+    if (activeCategory !== 'gas') syncActiveNav('gas');
     document.querySelectorAll('#gasModule .mol-tab').forEach(t =>
       t.classList.toggle('active', t.dataset.gasPanel === panelId));
     document.querySelectorAll('#gasModule .mol-panel').forEach(p =>
       p.classList.toggle('active', p.id === 'panel-' + panelId));
+    setBreadcrumbSub(GAS_TAB_LABELS[panelId] || '');
   }
 
   document.querySelectorAll('#gasModule .mol-tab').forEach(tab => {
