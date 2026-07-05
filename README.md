@@ -96,7 +96,6 @@ ChemSphere Formula Hub aims to:
 
 No external backend is required.
 
----
 
 📈 Roadmap
 
